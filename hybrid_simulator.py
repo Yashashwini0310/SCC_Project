@@ -4,6 +4,8 @@ import time
 import boto3
 import botocore.exceptions
 from benchmark_logger_csv import log_to_csv
+import psutil
+
 
 # CloudWatch Metric Sender
 def push_custom_metric(metric_name, value):
@@ -31,7 +33,8 @@ def run_mapreduce():
     start = time.time()
     subprocess.run(["python3", "sentiment_multiprocessing.py"], check=True)
     duration = time.time() - start
-    log_to_csv("MapReduce", duration)
+    cpu = psutil.cpu_percent(interval=1)
+    log_to_csv("MapReduce", duration,cpu)
     print(f"[Hybrid] MapReduce finished in {time.time() - start:.2f} sec")
     return duration
 
@@ -40,13 +43,14 @@ def run_spark():
     start = time.time()
     subprocess.run(["spark-submit", "spark_streaming.py"], check=True)
     duration = time.time() - start
-    log_to_csv("SparkStreaming", duration)
+    cpu = psutil.cpu_percent(interval=1)
+    log_to_csv("SparkStreaming", duration, cpu)
     print(f"[Hybrid] Spark Streaming finished in {time.time() - start:.2f} sec")
     return duration
 
 if __name__ == "__main__":
     start_time = time.time()
-    print("[Hybrid] Launching batch and stream jobs...")
+    print("[Hybrid Parallel] Launching batch and stream jobs...")
     
     mapreduce_time = [0]
     spark_time = [0]
@@ -64,6 +68,7 @@ if __name__ == "__main__":
     t2.join()
 
     total_duration = time.time() - start_time
-    log_to_csv("HybridParallel", total_duration)
+    total_cpu = psutil.cpu_percent(interval=1)
+    log_to_csv("HybridParallel", total_duration, total_cpu)
     print(f"[Hybrid] Total hybrid execution time: {total_duration:.2f} sec")
     push_custom_metric("TotalHybridExecutionTime", total_duration)

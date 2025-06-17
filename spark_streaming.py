@@ -27,17 +27,17 @@ def analyze_sentiment(line):
     else:
         return ("neutral", 1)
 
-# 1️⃣ Standard word count (non-windowed)
+# Standard word count (non-windowed)
 words = lines.flatMap(lambda line: line.split(" "))
 filtered_words = words.filter(lambda word: word.lower() not in stopwords)
 word_pairs = filtered_words.map(lambda word: (word.lower(), 1))
 word_counts = word_pairs.reduceByKey(lambda a, b: a + b)
 
-# 2️⃣ Sentiment counts (non-windowed)
+#  Sentiment counts (non-windowed)
 sentiments = lines.map(analyze_sentiment)
 sentiment_counts = sentiments.reduceByKey(lambda a, b: a + b)
 
-# 3️⃣ Sliding window word counts
+#  Sliding window word counts
 windowed_words = words.window(30, 10)
 windowed_filtered = windowed_words.filter(lambda word: word.lower() not in stopwords)
 windowed_word_pairs = windowed_filtered.map(lambda word: (word.lower(), 1))

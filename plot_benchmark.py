@@ -24,3 +24,12 @@ plt.xticks(rotation=10)
 plt.tight_layout()
 plt.savefig("benchmark_comparison.png")
 plt.show()
+
+# Calculate and display percentage improvement
+try:
+    parallel = avg_times[avg_times["Method"] == "HybridParallel"]["ExecutionTimeSec"].values[0]
+    sequential = avg_times[avg_times["Method"] == "HybridSequential"]["ExecutionTimeSec"].values[0]
+    improvement = ((sequential - parallel) / sequential) * 100
+    print(f"\n🚀 Parallelism improved performance by {improvement:.2f}% compared to sequential execution.")
+except IndexError:
+    print("\n⚠️ Make sure both 'HybridParallel' and 'HybridSequential' methods exist in benchmark_results.csv.")

@@ -3,6 +3,7 @@ import time
 from benchmark_logger_csv import log_to_csv
 import boto3
 import botocore.exceptions
+import psutil
 
 def push_custom_metric(metric_name, value):
     cloudwatch = boto3.client('cloudwatch')
@@ -27,7 +28,8 @@ def run_mapreduce():
     start = time.time()
     subprocess.run(["python3", "sentiment_multiprocessing.py"])
     duration = time.time() - start
-    log_to_csv("MapReduce", duration)
+    cpu = psutil.cpu_percent(interval=1)
+    log_to_csv("MapReduce", duration, cpu)
     print(f"[Sequential] MapReduce finished in {duration:.2f} sec")
     return duration
 
@@ -36,7 +38,8 @@ def run_spark():
     start = time.time()
     subprocess.run(["spark-submit", "spark_streaming.py"])
     duration = time.time() - start
-    log_to_csv("SparkStreaming", duration)
+    cpu = psutil.cpu_percent(interval=1)
+    log_to_csv("SparkStreaming", duration, cpu)
     print(f"[Sequential] Spark Streaming finished in {duration:.2f} sec")
     return duration
 
@@ -48,6 +51,7 @@ if __name__ == "__main__":
     spark_time = run_spark()
 
     total_time = time.time() - start_time
-    log_to_csv("HybridSequential", total_time)
+    total_cpu = psutil.cpu_percent(interval=1)
+    log_to_csv("HybridSequential", total_time, total_cpu)
     print(f"[Sequential] Total sequential execution time: {total_time:.2f} sec")
     push_custom_metric("TotalSequentialExecutionTime", total_time)
