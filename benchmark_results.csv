@@ -1,0 +1,4 @@
+Method,ExecutionTimeSec
+MapReduce,7.75
+SparkStreaming,160.54
+HybridParallel,160.54
