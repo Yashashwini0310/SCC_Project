@@ -67,6 +67,6 @@ def upload_to_s3(local_folder, bucket_name, s3_folder):
 # Start Streaming
 ssc.start()
 print("Spark Streaming Started. Waiting for input...")
-ssc.awaitTerminationOrTimeout(60)
+ssc.awaitTerminationOrTimeout(15)
 print("Streaming stopped. Uploading to S3...")
 upload_to_s3("stream_output", "imdb-text-processing", "results")

@@ -42,12 +42,13 @@ echo "[Streaming Feed] Simulating $NUM_BATCHES batches..."
 for ((i=1; i<=NUM_BATCHES; i++)); do
     POS_FILE=$(ls "$POS_DIR" | shuf -n 1)
     NEG_FILE=$(ls "$NEG_DIR" | shuf -n 1)
+    TIMESTAMP=$(date +%s%N)  # Nanosecond timestamp
 
-    cp "$POS_DIR/$POS_FILE" "$TARGET_DIR/pos_review_$i.txt"
-    cp "$NEG_DIR/$NEG_FILE" "$TARGET_DIR/neg_review_$i.txt"
+    cp "$POS_DIR/$POS_FILE" "$TARGET_DIR/pos_review_${i}_${TIMESTAMP}.txt"
+    cp "$NEG_DIR/$NEG_FILE" "$TARGET_DIR/neg_review_${i}_${TIMESTAMP}.txt"
 
     echo "[Streaming Feed] Dropped batch $i to $TARGET_DIR"
-    sleep 10
+    sleep 1
 done
 
 echo "[Streaming Feed] Finished streaming simulation."
